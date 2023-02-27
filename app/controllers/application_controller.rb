@@ -39,14 +39,17 @@ def blank_calculate_payment
   end
 def calculate_payment
   #Parameters: {"elephant"=>"42"}
-  @apr = params.fetch("user_apr").to_s
   #to_s(:percentage, { :precision => 4 } ) 
   #@ap= @apr(:percentage, { :precision => 4 })
+  
+  @apr = params.fetch("user_apr").to_f
   @no_of_years = params.fetch("user_years").to_i
   @principal = params.fetch("user_pv").to_f
-  
-  @numerator = ((@apr/12)*(@principal))
-  @denominator = 1- (1/((1+(@apr/12))**(@no_of_years*12)))
+  rate = @apr/100/12
+  num_payment_periods = @no_of_years *12
+  @numerator = rate* @principal
+ # @denominator = 1 - ((1+rate)** -num_payment_periods)
+  @denominator =  1 - (1/((1+rate)** num_payment_periods))
   @payment = @numerator/@denominator
    render({:template => "calculation_templates/payment_results.html.erb"})
 end
